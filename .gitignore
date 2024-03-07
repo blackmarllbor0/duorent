@@ -1,2 +1,6 @@
 .idea
+
 TASKS.md
+
+.env.dev
+.env.prod

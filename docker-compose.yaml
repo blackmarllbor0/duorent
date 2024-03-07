@@ -1,0 +1,74 @@
+version: "3"
+
+services:
+  postgres:
+    image: "postgres:16.1-alpine"
+    container_name: "duorent-db"
+    restart: always
+
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+
+    ports:
+      - "${POSTGRES_PORT}:5432"
+
+    volumes:
+      - "./data/postgres:/data/postgres"
+
+    networks:
+      duorent:
+        aliases:
+          - ${POSTGRES_HOST}
+
+    healthcheck:
+      test: [
+        "CMD-SHELL",
+        "pg_isready",
+        "-U",
+        "${POSTGRES_USER}",
+        "-d",
+        "${POSTGRES_DB}"
+      ]
+      interval: 15s
+      timeout: 15s
+      retries: 3
+
+  postgres-migrate:
+    image: migrate/migrate:v4.15.2
+    container_name: duorent-pg-migrate
+    restart: on-failure
+
+    volumes:
+      - ./migrations:/migrations
+
+    networks:
+      - ${POSTGRES_HOST}
+
+    profiles:
+      - tools
+
+    entrypoint: [
+      "migrate",
+      "-database",
+      "${POSTGRES_CONN_STRING}",
+      "-path",
+      "/migrations"
+    ]
+
+    command: [ "up" ]
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+    links:
+      - postgres
+
+volumes:
+  postgres:
+
+networks:
+  duorent:
+    driver: bridge
