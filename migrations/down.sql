@@ -1,0 +1,21 @@
+DROP INDEX IF EXISTS idx_countries_name;
+DROP INDEX IF EXISTS idx_cities_country_id;
+DROP INDEX IF EXISTS idx_cities_name;
+DROP INDEX IF EXISTS idx_currency_name;
+DROP INDEX IF EXISTS idx_budgets_currency_id;
+DROP INDEX IF EXISTS idx_budgets_max_sum;
+DROP INDEX IF EXISTS idx_budgets_min_sum;
+DROP INDEX IF EXISTS idx_users_nationality_country_id;
+DROP INDEX IF EXISTS idx_users_citizenship_country_id;
+DROP INDEX IF EXISTS idx_users_gender_id;
+DROP INDEX IF EXISTS idx_users_budget_id;
+DROP INDEX IF EXISTS idx_users_city_search_id;
+DROP INDEX IF EXISTS idx_users_country_search_id;
+DROP INDEX IF EXISTS idx_users_email;
+
+DROP TABLE IF EXISTS users CASCADE;
+DROP TABLE IF EXISTS budgets CASCADE;
+DROP TABLE IF EXISTS currency CASCADE;
+DROP TABLE IF EXISTS gender CASCADE;
+DROP TABLE IF EXISTS cities CASCADE;
+DROP TABLE IF EXISTS countries CASCADE;
