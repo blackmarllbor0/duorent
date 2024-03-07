@@ -22,9 +22,9 @@ func (ur *userRepo) GetAllUsers(limit uint) ([]models.User, error) {
 	)
 
 	if limit == 0 {
-		rows, err = ur.pool.Query("select u.* from public.users u group by u.full_name")
+		rows, err = ur.pool.Query("select u.* from public.users u order by u.full_name")
 	} else {
-		rows, err = ur.pool.Query("select u.* from public.users u limit %d group by u.full_name", limit)
+		rows, err = ur.pool.Query(" select u.* from public.users u order by u.full_name limit $1", limit)
 	}
 
 	if err != nil {
