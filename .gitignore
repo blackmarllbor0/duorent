@@ -1,8 +1,15 @@
+# ides
 .idea
+.vscode
+
 
 TASKS.md
 
+# configuration
 .env.dev
 .env.prod
+config.prod.yaml
+config.dev.yaml
 
+# data
 data
