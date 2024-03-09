@@ -7,8 +7,8 @@ import (
 )
 
 type AppConfig struct {
-	Server ServerConfig
-	DB     DBConfig
+	Server ServerConfig `yaml:"Server"`
+	DB     DBConfig     `yaml:"DB"`
 }
 
 type ServerConfig struct {
@@ -31,6 +31,10 @@ type configService struct {
 }
 
 func NewConfigService() ConfigService {
+	return &configService{}
+}
+
+func (cs *configService) LoadConfig() error {
 	runMode := os.Getenv("RUN_MODE")
 	if runMode == "" {
 		runMode = "dev"
@@ -40,17 +44,13 @@ func NewConfigService() ConfigService {
 	viper.AddConfigPath(".")
 	viper.SetConfigType("yaml")
 
-	return &configService{}
-}
-
-func (cs *configService) LoadConfig() error {
 	if err := viper.ReadInConfig(); err != nil {
 		return fmt.Errorf("cfg: error on load configuration, err: %v", err)
 	}
 
 	var appConfig AppConfig
 
-	if err := viper.Unmarshal(&appConfig); err != nil {
+	if err := viper.UnmarshalKey("App", &appConfig); err != nil {
 		return fmt.Errorf("cfg: error on unmarsahl app structure, err: %v", err)
 	}
 
