@@ -41,6 +41,8 @@ func (uc UserController) GetAllUsers(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"error": fmt.Errorf(err.Error()),
 		})
+
+		return
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{
