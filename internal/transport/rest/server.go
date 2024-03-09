@@ -8,7 +8,7 @@ import (
 
 func RunNewHTTPServer(port uint, routes http.Handler) error {
 	server := http.Server{
-		Addr:           fmt.Sprintf("%v", port),
+		Addr:           fmt.Sprintf(":%v", port),
 		Handler:        routes,
 		MaxHeaderBytes: 1 << 20,
 		ReadTimeout:    time.Second * 10,

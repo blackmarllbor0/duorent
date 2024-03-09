@@ -19,8 +19,6 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	log.Println(configService.GetDBConfig().ConnString)
-
 	pool, err := postgres.NewPostgresConnection(configService.GetDBConfig().ConnString, 100)
 	if err != nil {
 		log.Fatalln(err)
