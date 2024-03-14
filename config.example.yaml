@@ -1,5 +1,0 @@
-App:
-  Server:
-    Port: uint
-  DB:
-    ConnString: string

@@ -6,19 +6,6 @@ import (
 	"os"
 )
 
-type AppConfig struct {
-	Server ServerConfig `yaml:"Server"`
-	DB     DBConfig     `yaml:"DB"`
-}
-
-type ServerConfig struct {
-	Port uint `yaml:"Port"`
-}
-
-type DBConfig struct {
-	ConnString string `yaml:"ConnString"`
-}
-
 type ConfigService interface {
 	LoadConfig() error
 	GetAppConfig() AppConfig
