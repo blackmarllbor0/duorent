@@ -2,7 +2,7 @@ package models
 
 import "time"
 
-type Currency struct {
+type Nationality struct {
 	ID         uint64    `sql:"id"`
 	Title      string    `sql:"title"`
 	IsDeleted  bool      `sql:"is_deleted"`

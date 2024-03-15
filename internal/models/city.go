@@ -1,8 +1,13 @@
 package models
 
+import "time"
+
 type City struct {
-	ID         uint   `sql:"id"`
-	CountryID  uint   `sql:"country_id"`
-	Name       string `sql:"name"`
-	FlagImgUrl string `sql:"flag_img_url"`
+	ID            uint64    `sql:"id"`
+	CountryId     uint64    `sql:"country_id"`
+	Title         string    `sql:"title"`
+	LinkToFlagImg string    `sql:"link_to_flag_img"`
+	IsDeleted     bool      `sql:"is_deleted"`
+	CreateDate    time.Time `sql:"create_date"`
+	UpdateDate    time.Time `sql:"update_date"`
 }
