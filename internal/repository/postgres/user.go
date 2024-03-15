@@ -8,23 +8,25 @@ import (
 )
 
 type userRepo struct {
-	pool *sql.DB
+	conn repository.SQLConnection
 }
 
-func NewUserRepo(pool *sql.DB) repository.UserRepo {
-	return &userRepo{pool: pool}
+func NewUserRepo(conn repository.SQLConnection) repository.UserRepo {
+	return &userRepo{conn: conn}
 }
 
 func (ur *userRepo) GetAllUsers(limit uint) ([]models.User, error) {
-	var (
-		err  error
-		rows *sql.Rows
-	)
+	pool, err := ur.conn.GetConnection()
+	if err != nil {
+		return nil, err
+	}
+
+	var rows *sql.Rows
 
 	if limit == 0 {
-		rows, err = ur.pool.Query("select u.* from public.users u order by u.full_name")
+		rows, err = pool.Query("select u.* from public.users u order by u.full_name")
 	} else {
-		rows, err = ur.pool.Query(" select u.* from public.users u order by u.full_name limit $1", limit)
+		rows, err = pool.Query(" select u.* from public.users u order by u.full_name limit $1", limit)
 	}
 
 	if err != nil {
@@ -44,6 +46,8 @@ func (ur *userRepo) GetAllUsers(limit uint) ([]models.User, error) {
 
 		users = append(users, user)
 	}
+
+	ur.conn.ReleaseConnection()
 
 	return users, err
 }

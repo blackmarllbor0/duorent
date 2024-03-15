@@ -8,12 +8,13 @@ import (
 )
 
 type pgPool struct {
-	pool             *sql.DB
-	mutex            *sync.Mutex
-	maxCons, numCons uint
+	pool  *sql.DB
+	mutex *sync.Mutex
+
+	maxCons, numCons uint16
 }
 
-func NewPostgresConnection(connString string, maxCons uint) (repository.SQLConnection, error) {
+func NewPostgresConnection(connString string, maxCons uint16) (repository.SQLConnection, error) {
 	pool, err := sql.Open("postgres", connString)
 	if err != nil {
 		return nil, fmt.Errorf("pg: opening err: %v", err)

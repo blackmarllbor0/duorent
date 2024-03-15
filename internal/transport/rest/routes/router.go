@@ -1,14 +1,14 @@
 package routes
 
 import (
-	"database/sql"
+	"duorent.ru/internal/repository"
 	"github.com/gin-gonic/gin"
 )
 
-func InitRestRoutes(pool *sql.DB) *gin.Engine {
+func InitRestRoutes(conn repository.SQLConnection) *gin.Engine {
 	router := gin.Default()
 
-	UserRoutes(pool, router)
+	UserRoutes(conn, router)
 
 	return router
 }

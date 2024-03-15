@@ -19,12 +19,7 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	pool, err := postgres.NewPostgresConnection(configService.GetDBConfig().Postgres.ConnString, 100)
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	conn, err := pool.GetConnection()
+	conn, err := postgres.NewPostgresConnection(configService.GetDBConfig().Postgres.ConnString, 100)
 	if err != nil {
 		log.Fatalln(err)
 	}
