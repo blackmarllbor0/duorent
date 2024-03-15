@@ -9,22 +9,22 @@ create table if not exists "references"."nationalities"
     "update_date" timestamptz
 );
 
-create table if not exists "references"."countries"
-(
-    "id" serial primary key,
-    "title" text not null,
-    "link_to_flag_img" text not null,
-    "is_deleted" boolean default false,
-    "create_date" timestamptz default timezone('UTC', current_timestamp),
-    "update_date" timestamptz
-);
-
 create table if not exists "references"."cities"
 (
     "id" serial primary key,
     "country_id" integer references "references".countries(id) not null,
     "title" text not null,
-    "link_to_flag_img" text not null,
+    "link_to_flag_img" text,
+    "is_deleted" boolean default false,
+    "create_date" timestamptz default timezone('UTC', current_timestamp),
+    "update_date" timestamptz
+);
+
+create table if not exists "references"."countries"
+(
+    "id" serial primary key,
+    "title" text not null,
+    "link_to_flag_img" text,
     "is_deleted" boolean default false,
     "create_date" timestamptz default timezone('UTC', current_timestamp),
     "update_date" timestamptz
@@ -38,6 +38,17 @@ create table if not exists "references"."currency"
     "create_date" timestamptz default timezone('UTC', current_timestamp),
     "update_date" timestamptz
 );
+
+create table if not exists "references"."roles"
+(
+    "id" serial primary key,
+    "role" text not null,
+    "is_deleted" boolean default false,
+    "create_date" timestamptz default timezone('UTC', current_timestamp),
+    "update_date" timestamptz
+);
+
+create index if not exists idx_public_roles_role on "references"."roles"("role");
 
 create index if not exists idx_references_nationalities_title on "references".nationalities("title");
 

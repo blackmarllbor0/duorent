@@ -1,3 +1,4 @@
+drop index if exists "public".idx_public_roles_role;
 drop index if exists "references".idx_geo_cities_country_id;
 drop index if exists "references".idx_geo_cities_title;
 drop index if exists "references".idx_geo_countries_title;
@@ -8,5 +9,6 @@ drop table if exists "references"."cities";
 drop table if exists "references"."countries";
 drop table if exists "references"."nationalities";
 drop table if exists "references"."currency";
+drop table if exists "references"."roles";
 
 drop schema if exists "references";

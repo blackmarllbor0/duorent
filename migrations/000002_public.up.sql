@@ -1,14 +1,5 @@
 create schema if not exists "public";
 
-create table if not exists "public"."roles"
-(
-    "id" serial primary key,
-    "role" text not null,
-    "is_deleted" boolean default false,
-    "create_date" timestamptz default timezone('UTC', current_timestamp),
-    "update_date" timestamptz
-);
-
 create table if not exists "public"."users"
 (
     "id" serial primary key,
@@ -37,7 +28,7 @@ create table if not exists "public"."user_roles"
 (
     "id" serial primary key,
     "user_id" integer references "public"."users"("id"),
-    "role_id" integer references "public"."roles"("id"),
+    "role_id" integer references "references"."roles"("id"),
     "is_deleted" boolean default false,
     "create_date" timestamptz default timezone('UTC', current_timestamp),
     "update_date" timestamptz
@@ -57,8 +48,6 @@ create table if not exists "public"."search_settings"
     "create_date" timestamptz default timezone('UTC', current_timestamp),
     "update_date" timestamptz
 );
-
-create index if not exists idx_public_roles_role on "public"."roles"("role");
 
 create index if not exists idx_public_user_roles_user_id on "public"."user_roles"("user_id");
 create index if not exists idx_public_user_roles_role_id on "public"."user_roles"("role_id");

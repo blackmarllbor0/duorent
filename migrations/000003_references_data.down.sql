@@ -1,0 +1,1 @@
+-- data from tables is deleted when tables are deleted
