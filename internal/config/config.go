@@ -11,6 +11,7 @@ type ConfigService interface {
 	GetAppConfig() AppConfig
 	GetServerConfig() ServerConfig
 	GetDBConfig() DBConfig
+	GetLocalHash() LocalHash
 }
 
 type configService struct {
@@ -56,4 +57,8 @@ func (cs *configService) GetServerConfig() ServerConfig {
 
 func (cs *configService) GetDBConfig() DBConfig {
 	return cs.app.DB
+}
+
+func (cs *configService) GetLocalHash() LocalHash {
+	return cs.app.LocalHash
 }

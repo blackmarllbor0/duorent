@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"duorent.ru/internal/config"
 	"duorent.ru/internal/repository/postgres"
 	"duorent.ru/internal/transport/rest"
@@ -8,7 +9,7 @@ import (
 	"duorent.ru/pkg/signal"
 	"log"
 
-	_ "github.com/lib/pq"
+	_ "github.com/jackc/pgx"
 )
 
 func main() {
@@ -19,12 +20,13 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	conn, err := postgres.NewPostgresConnection(configService.GetDBConfig().Postgres.ConnString, 100)
+	// todo: decide something with the ctx.
+	conn, err := postgres.NewPostgresConnection(configService, context.Background())
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	router := routes.InitRestRoutes(conn)
+	router := routes.InitRestRoutes(conn, configService)
 
 	if err := rest.RunNewHTTPServer(configService.GetServerConfig().Port, router); err != nil {
 		log.Fatalln(err)
