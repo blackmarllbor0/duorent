@@ -1,55 +1,49 @@
 package postgres
 
 import (
-	"database/sql"
+	"context"
+	"duorent.ru/internal/config"
 	"duorent.ru/internal/repository"
 	"fmt"
-	"sync"
+	"github.com/jackc/pgx/v5/pgxpool"
+	"time"
 )
 
-type pgPool struct {
-	pool  *sql.DB
-	mutex *sync.Mutex
-
-	maxCons, numCons uint16
+type pgxPool struct {
+	db  *pgxpool.Config
+	ctx context.Context
 }
 
-func NewPostgresConnection(connString string, maxCons uint16) (repository.SQLConnection, error) {
-	pool, err := sql.Open("postgres", connString)
+func NewPostgresConnection(cfgService config.ConfigService, ctx context.Context) (repository.SQLConnection, error) {
+	db, err := pgxpool.ParseConfig(cfgService.GetDBConfig().Postgres.ConnString)
 	if err != nil {
-		return nil, fmt.Errorf("pg: opening err: %v", err)
+		return nil, fmt.Errorf("pg: failed to create a cfg: %v", err)
 	}
 
-	pool.SetMaxOpenConns(int(maxCons))
+	db.MaxConns = int32(cfgService.GetDBConfig().Postgres.MaxCons)
+	db.MinConns = int32(cfgService.GetDBConfig().Postgres.MinCons)
+	db.MaxConnLifetime = time.Hour                 // todo: add to cfg
+	db.MaxConnIdleTime = time.Minute * 30          // todo: add to cfg
+	db.HealthCheckPeriod = time.Minute             // todo: add to cfg
+	db.ConnConfig.ConnectTimeout = time.Second * 5 // todo: add to cfg
 
-	if err := pool.Ping(); err != nil {
-		return nil, fmt.Errorf("pg: ping error: %v", err)
-	}
-
-	return &pgPool{
-		pool:    pool,
-		maxCons: maxCons,
-		numCons: 0,
-		mutex:   &sync.Mutex{},
-	}, nil
+	return &pgxPool{db: db, ctx: ctx}, err
 }
 
-func (p *pgPool) GetConnection() (*sql.DB, error) {
-	p.mutex.Lock()
-	defer p.mutex.Unlock()
-
-	if p.numCons == p.maxCons {
-		return nil, fmt.Errorf("pg: connection pool is full")
+func (p *pgxPool) GetConnection() (*pgxpool.Conn, error) {
+	pool, err := pgxpool.NewWithConfig(p.ctx, p.db)
+	if err != nil {
+		return nil, fmt.Errorf("pg: error while creating conn to the db: %v", err)
 	}
 
-	p.numCons++
+	conn, err := pool.Acquire(p.ctx)
+	if err != nil {
+		return nil, fmt.Errorf("pg: error while acquiring conn from the db pool: %v", err)
+	}
 
-	return p.pool, nil
-}
+	if err := conn.Ping(p.ctx); err != nil {
+		return nil, fmt.Errorf("could not ping db")
+	}
 
-func (p *pgPool) ReleaseConnection() {
-	p.mutex.Lock()
-	defer p.mutex.Unlock()
-
-	p.numCons--
+	return conn, nil
 }

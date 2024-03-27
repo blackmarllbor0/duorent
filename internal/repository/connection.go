@@ -1,8 +1,9 @@
 package repository
 
-import "database/sql"
+import (
+	"github.com/jackc/pgx/v5/pgxpool"
+)
 
 type SQLConnection interface {
-	GetConnection() (*sql.DB, error)
-	ReleaseConnection()
+	GetConnection() (*pgxpool.Conn, error)
 }
