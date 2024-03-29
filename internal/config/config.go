@@ -1,6 +1,7 @@
 package config
 
 import (
+	"duorent.ru/pkg/logger"
 	"fmt"
 	"github.com/spf13/viper"
 	"os"
@@ -15,14 +16,16 @@ type ConfigService interface {
 }
 
 type configService struct {
-	app AppConfig
+	app        AppConfig
+	logService logger.LoggerService
 }
 
-func NewConfigService() ConfigService {
-	return &configService{}
+func NewConfigService(logService logger.LoggerService) ConfigService {
+	return &configService{logService: logService}
 }
 
 func (cs *configService) LoadConfig() error {
+	// todo: move to main function
 	runMode := os.Getenv("RUN_MODE")
 	if runMode == "" {
 		runMode = "dev"
@@ -33,14 +36,24 @@ func (cs *configService) LoadConfig() error {
 	viper.SetConfigType("yaml")
 
 	if err := viper.ReadInConfig(); err != nil {
-		return fmt.Errorf("cfg: error on load configuration, err: %v", err)
+		err = fmt.Errorf("cfg: error on load configuration, err: %v", err)
+		cs.logService.Error(err.Error())
+
+		return err
 	}
+
+	go cs.logService.Info("Configuration successfully loaded")
 
 	var appConfig AppConfig
 
 	if err := viper.UnmarshalKey("App", &appConfig); err != nil {
-		return fmt.Errorf("cfg: error on unmarsahl app structure, err: %v", err)
+		err = fmt.Errorf("cfg: error on unmarsahl app structure, err: %v", err)
+		cs.logService.Error(err.Error())
+
+		return err
 	}
+
+	go cs.logService.Info("Configuration successfully unmarshalling")
 
 	cs.app = appConfig
 

@@ -6,6 +6,7 @@ import (
 	"duorent.ru/internal/repository/postgres"
 	"duorent.ru/internal/transport/rest"
 	"duorent.ru/internal/transport/rest/routes"
+	"duorent.ru/pkg/logger"
 	"duorent.ru/pkg/signal"
 	"log"
 
@@ -15,7 +16,12 @@ import (
 func main() {
 	go signal.ListenSignals()
 
-	configService := config.NewConfigService()
+	logService, err := logger.NewLogrusLogger()
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	configService := config.NewConfigService(logService)
 	if err := configService.LoadConfig(); err != nil {
 		log.Fatalln(err)
 	}

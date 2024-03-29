@@ -122,5 +122,5 @@ func (ur *userRepo) CreateUser(ctx context.Context, user models.User) (id uint64
 		return 0, fmt.Errorf("pg: user: failed to commit transaction: %v", err)
 	}
 
-	return uint64(id), nil
+	return id, nil
 }
