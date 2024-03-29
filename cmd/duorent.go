@@ -7,22 +7,18 @@ import (
 	"duorent.ru/internal/transport/rest"
 	"duorent.ru/internal/transport/rest/routes"
 	"duorent.ru/pkg/logger"
+	run_mode "duorent.ru/pkg/run-mode"
 	"duorent.ru/pkg/signal"
-	"log"
-	"os"
-
 	_ "github.com/jackc/pgx"
+	"log"
 )
 
 func main() {
 	go signal.ListenSignals()
 
-	runMode := os.Getenv("RUN_MODE")
-	if runMode == "" {
-		runMode = "dev"
-	}
+	runMode := run_mode.GetAppRunMode()
 
-	logService, err := logger.NewLogrusLogger()
+	logService, err := logger.NewLogrusLogger(runMode)
 	if err != nil {
 		log.Fatalln(err)
 	}

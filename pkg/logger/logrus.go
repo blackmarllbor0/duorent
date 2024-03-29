@@ -23,7 +23,7 @@ type logrusLogger struct {
 	logger *logrus.Logger
 }
 
-func NewLogrusLogger() (LoggerService, error) {
+func NewLogrusLogger(runMode string) (LoggerService, error) {
 	ls := &logrusLogger{}
 
 	if err := ls.initLogDirs(); err != nil {
@@ -48,9 +48,7 @@ func NewLogrusLogger() (LoggerService, error) {
 	}
 
 	logger := logrus.New()
-	// todo: pass the level through a argument so that you can
-	// control the logging level depending on `RUN_MODE`
-	logger.SetLevel(logrus.DebugLevel)
+	logger.SetLevel(logrus.Level(getLevelByAppRunMode(runMode)))
 	logger.SetFormatter(&logrus.TextFormatter{
 		FullTimestamp:   true,
 		PadLevelText:    true,
