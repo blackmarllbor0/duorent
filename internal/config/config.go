@@ -4,11 +4,10 @@ import (
 	"duorent.ru/pkg/logger"
 	"fmt"
 	"github.com/spf13/viper"
-	"os"
 )
 
 type ConfigService interface {
-	LoadConfig() error
+	LoadConfig(runMode string) error
 	GetAppConfig() AppConfig
 	GetServerConfig() ServerConfig
 	GetDBConfig() DBConfig
@@ -24,13 +23,7 @@ func NewConfigService(logService logger.LoggerService) ConfigService {
 	return &configService{logService: logService}
 }
 
-func (cs *configService) LoadConfig() error {
-	// todo: move to main function
-	runMode := os.Getenv("RUN_MODE")
-	if runMode == "" {
-		runMode = "dev"
-	}
-
+func (cs *configService) LoadConfig(runMode string) error {
 	viper.SetConfigName("config." + runMode)
 	viper.AddConfigPath(".")
 	viper.SetConfigType("yaml")

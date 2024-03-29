@@ -9,6 +9,7 @@ import (
 	"duorent.ru/pkg/logger"
 	"duorent.ru/pkg/signal"
 	"log"
+	"os"
 
 	_ "github.com/jackc/pgx"
 )
@@ -16,13 +17,18 @@ import (
 func main() {
 	go signal.ListenSignals()
 
+	runMode := os.Getenv("RUN_MODE")
+	if runMode == "" {
+		runMode = "dev"
+	}
+
 	logService, err := logger.NewLogrusLogger()
 	if err != nil {
 		log.Fatalln(err)
 	}
 
 	configService := config.NewConfigService(logService)
-	if err := configService.LoadConfig(); err != nil {
+	if err := configService.LoadConfig(runMode); err != nil {
 		log.Fatalln(err)
 	}
 
