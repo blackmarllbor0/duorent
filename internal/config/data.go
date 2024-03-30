@@ -11,9 +11,13 @@ type ServerConfig struct {
 }
 
 type Postgres struct {
-	ConnString string `yaml:"ConnString"`
-	MaxCons    uint16 `yaml:"MaxCons"`
-	MinCons    uint16 `yaml:"MinCons"`
+	ConnString                 string `yaml:"ConnString"`
+	MaxCons                    uint16 `yaml:"MaxCons"`
+	MinCons                    uint16 `yaml:"MinCons"`
+	MaxConnLifetimeInMinutes   uint32 `yaml:"MaxConnLifetimeInMinutes"`
+	MaxConnIdleTimeInMinutes   uint32 `yaml:"MaxConnIdleTimeInMinutes"`
+	HealthCheckPeriodInSeconds uint32 `yaml:"HealthCheckPeriodInSeconds"`
+	ConnectTimeoutInSeconds    uint32 `yaml:"ConnectTimeoutInSeconds"`
 }
 
 type DBConfig struct {

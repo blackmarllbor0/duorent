@@ -22,10 +22,10 @@ func NewPostgresConnection(cfgService config.ConfigService, ctx context.Context)
 
 	db.MaxConns = int32(cfgService.GetDBConfig().Postgres.MaxCons)
 	db.MinConns = int32(cfgService.GetDBConfig().Postgres.MinCons)
-	db.MaxConnLifetime = time.Hour                 // todo: add to cfg
-	db.MaxConnIdleTime = time.Minute * 30          // todo: add to cfg
-	db.HealthCheckPeriod = time.Minute             // todo: add to cfg
-	db.ConnConfig.ConnectTimeout = time.Second * 5 // todo: add to cfg
+	db.MaxConnLifetime = time.Minute * time.Duration(cfgService.GetDBConfig().Postgres.MaxConnLifetimeInMinutes)
+	db.MaxConnIdleTime = time.Minute * time.Duration(cfgService.GetDBConfig().Postgres.MaxConnIdleTimeInMinutes)
+	db.HealthCheckPeriod = time.Second * time.Duration(cfgService.GetDBConfig().Postgres.HealthCheckPeriodInSeconds)
+	db.ConnConfig.ConnectTimeout = time.Second * time.Duration(cfgService.GetDBConfig().Postgres.ConnectTimeoutInSeconds)
 
 	return &pgxPool{db: db, ctx: ctx}, err
 }
